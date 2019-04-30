@@ -16,16 +16,16 @@ const sendUserError = (status, message, res) => {
   return;
 };
 
-router.post("/", (req, res) => {
+router.post("/bears/", (req, res) => {
   const { name } = req.body;
   if (!name) {
-    sendUserError(400, "Please provide a name for the user", res);
+    sendUserError(400, "Please provide a name for the bear", res);
     return;
   }
-  db("zoos")
+  db("bears")
     .insert(req.body, "name")
     .then(ids => {
-      db("zoos")
+      db("bears")
         .where({ id: ids[0] })
         .first()
         .then(role => {
@@ -38,32 +38,32 @@ router.post("/", (req, res) => {
     .catch(err => {
       sendUserError(
         500,
-        "Something went wrong posting the zoo.  Try Again!",
+        "Something went wrong making the bear.  Try Again!",
         res
       );
     });
 });
 
-router.get("/", (req, res) => {
-  db("zoos")
-    .then(zoos => {
-      res.status(200).json(zoos);
+router.get("/bears/", (req, res) => {
+  db("bears")
+    .then(bears => {
+      res.status(200).json(bears);
     })
     .catch(err => {
       console.log(err);
     });
 });
 
-router.get("/:id", (req, res) => {
+router.get("/bears/:id", (req, res) => {
   // const { id } = req.params;
-  db("zoos")
+  db("bears")
     .where({ id: req.params.id })
     .first()
     .then(zoo => {
       if (zoo) {
         res.status(200).json(zoo);
       } else {
-        sendUserError(404, "Zoo not found!", res);
+        sendUserError(404, "Bear not found!", res);
       }
     })
     .catch(err => {
@@ -71,15 +71,15 @@ router.get("/:id", (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {
-  db("zoos")
+router.delete("/bears/:id", (req, res) => {
+  db("bears")
     .where({ id: req.params.id })
     .del()
     .then(count => {
       if (count === 0) {
         sendUserError(
           404,
-          "The user with the specified ID does not exist.",
+          "The bear with the specified ID does not exist.",
           res
         );
         return;
@@ -91,8 +91,8 @@ router.delete("/:id", (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {
-  db("zoos")
+router.put("/bears/:id", (req, res) => {
+  db("bears")
     .where({ id: req.params.id })
     .update(req.body)
     .then(count => {
@@ -101,7 +101,7 @@ router.put("/:id", (req, res) => {
           message: `${count} ${count > 1 ? "records" : "record"} updated`
         });
       } else {
-        sendUserError(404, "Zoo does not exist", res);
+        sendUserError(404, "Bear does not exist", res);
       }
     })
     .catch(err => {
